@@ -1,0 +1,40 @@
+body { 
+    width: 300px;
+}
+
+#miniature img{
+    max-height: 80px;
+    max-width: 103px;
+}
+
+#miniature {
+    float: left;
+    height: 80px;
+}
+
+#description {
+    padding: 5px;
+    float:  left;
+}
+
+#description {
+    line-break: normal;
+    width: 60%;
+}
+
+#description p {
+    margin: 0;
+}
+
+#container {
+    height: 80px;
+    width: 300px;
+}
+
+a {
+    text-decoration: none;
+}
+
+a:visited {
+    color: rgb(0, 0, 238);
+}

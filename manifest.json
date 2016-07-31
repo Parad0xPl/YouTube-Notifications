@@ -1,0 +1,23 @@
+{
+  "name": "See your subscription",
+  "version": "0.5",
+  "manifest_version": 2,
+  "description": "See all what Youtube is tring hide to you",
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "background": {
+    "scripts": ["js/jquery/jquery.js", "src/background.js"]
+  },
+  "browser_action": {
+    "default_popup": "src/popup.html"
+  },
+  "default_locale": "en",
+  "options_page": "src/options/index.html",
+  "permissions": [
+    "https://www.youtube.com/*",
+    "notifications"
+  ]
+}
