@@ -1,11 +1,11 @@
 //Definition of Interval Object
 function arr_diff (a1, a2) {
-    var a = [], diff = [], at2 = {}, at1 = {};
-    a1.forEach(function(index, element){
-        at1[element.id] = JSON.stringify(element);
+    var a = {}, diff = [], at2 = {}, at1 = {};
+    a1.forEach(function(element, index){
+        at1[element.id] = element;
     });
-    a2.forEach(function(index, element){
-        at2[element.id] = JSON.stringify(element);
+    a2.forEach(function(element, index){
+        at2[element.id] = element;
     });
     $.each(at1, function(index, element) {
         a[index] = true;
@@ -16,7 +16,7 @@ function arr_diff (a1, a2) {
         }
     });
     for (var k in a) {
-        diff.push(JSON.parse(az1[k]));
+        diff.push(at1[k]);
     }
     return diff;
 };
@@ -27,7 +27,7 @@ interval.func = null;
 interval.time = 30 * 1000;
 interval.restart = function () {
     console.log("Interval (RE)start");
-    if (this.func == null || this.time <= 0) {
+    if (this.func == null || this.time <= 10*1000) {
         return -1;
     }
     if (this.container != 0) {
@@ -42,6 +42,34 @@ var maxPerYoutuber = 25;
 var ytControler = new Object;
 var dataContener = new Object;
 var ActualData = {videos:[]};
+
+function makeid()
+{
+    var text = "";
+    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+    for( var i=0; i < 5; i++ )
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+    return text;
+}
+
+var test = function(arr){
+  var tempVideo = {};
+  tempVideo.title = "Testowe";
+  tempVideo.publishedAt = new Date();
+  tempVideo.id = makeid();
+  tempVideo.author = "Testowy Kanał";
+  tempVideo.authorID = makeid();
+  tempVideo.image = "";
+  tempVideo.description = "Testy";
+  tempVideo.publishedAtValue = tempVideo.publishedAt.valueOf();
+  arr.videos.push(tempVideo);
+  return 0;
+}
+
+var debug = false;
+
 ytControler.update = function () {
     var time = new Date();
     console.count("Start Updating");
@@ -129,6 +157,8 @@ ytControler.update = function () {
             dataContener.videos.sort(compare2);
             dataContener.videos.sort(compare);
             if (ActualData.videos.length > 0 && dataContener.videos.length > 0) {
+                if(debug)
+                  test(dataContener);
                 var videos = arr_diff(dataContener.videos, ActualData.videos);
                 for (n in videos) {
                     console.log("%o " + videos[n].publishedAtValue - new Date().valueOf() + " " + new Date().valueOf() + " " + interval.time * 1.5, videos[n]);
