@@ -1,3 +1,7 @@
+//Init
+
+chrome.browserAction.setBadgeText({text: ""});
+
 //Definition of Interval Object
 function arr_diff (a1, a2) {
     var a = {}, diff = [], at2 = {}, at1 = {};
@@ -160,6 +164,13 @@ ytControler.update = function () {
                 if(debug)
                   test(dataContener);
                 var videos = arr_diff(dataContener.videos, ActualData.videos);
+                if(videos.length > 0){
+                  chrome.browserAction.getBadgeText({}, function(text){
+                    if(text == null)
+                      text = "";
+                    chrome.browserAction.setBadgeText({text: String(Number(text) + videos.length)});
+                  });
+                }
                 for (n in videos) {
                     console.log("%o " + videos[n].publishedAtValue - new Date().valueOf() + " " + new Date().valueOf() + " " + interval.time * 1.5, videos[n]);
                     if (videos[n].publishedAtValue - new Date().valueOf() < interval.time * 1.5)
@@ -174,7 +185,7 @@ ytControler.update = function () {
             }
             ActualData = null;
             ActualData = Object.assign({}, dataContener);
-            dataContener = new Object();
+            delete dataContener;
             console.count("End Updating");
         }
     }, 150);
@@ -198,6 +209,7 @@ interval.time = 1000*15;
 interval.restart();
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     if (request.ask == "list") {
+        chrome.browserAction.setBadgeText({text: ""});
         sendResponse(ActualData.videos);
     }
 });
