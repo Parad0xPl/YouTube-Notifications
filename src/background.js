@@ -76,7 +76,7 @@ var test = function(arr){//Dostawia testowe wideo do tablicy arr
   return 0;
 }
 
-var debug = false; //Nieużywana flaga pod debugowanie
+var debug = true; //Nieużywana flaga pod debugowanie
 
 ytControler.update = function () {//Funckja pod updatowanie
     var time = new Date();//Aktualny czas
@@ -147,10 +147,8 @@ ytControler.update = function () {//Funckja pod updatowanie
                             tempVideo.authorID = arg1;
                             tempVideo.image = obj2.items[x].snippet.thumbnails;
                             tempVideo.description = obj2.items[x].snippet.description;
-                            if (tempVideo.publishedAt.valueOf() >= new Date().valueOf() - (2 * 7 * 24 * 60 * 60 * 1000)) {
-                                tempVideo.publishedAtValue = tempVideo.publishedAt.valueOf();
-                                dataContener.videos.push(tempVideo);
-                            }
+                            tempVideo.publishedAtValue = tempVideo.publishedAt.valueOf();
+                            dataContener.videos.push(tempVideo);
                         }
                         iGlobal++;//Zebrano dane, zwiększono licznik
                     });
@@ -227,11 +225,38 @@ interval.func = function () {//Ustawienie funkcjji
     ytControler.update();
 }
 interval.time = 1000*15;//Nowy czas do debugowania
+
+//Initialization
+
+if(debug)
+  console.debug("Start Init");
+chrome.storage.sync.get("settings",function(items){
+  if(items != null && items != "" && items.settings != undefined){
+    console.log(items);
+    interval.time = items.settings.interval;
+    maxPerYoutuber = items.settings.max;
+  }
+});
+if(debug)
+  console.debug("Stop Init");
+
+//End of initialization
+
 interval.restart();//Odpalenie interwału
 //Listener pod zapytania z popup'a
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     if (request.ask == "list") {
-        chrome.browserAction.setBadgeText({text: ""});//Wyzeruj badge
-        sendResponse(ActualData.videos);//Wyślij listę video
+      chrome.browserAction.setBadgeText({text: ""});//Wyzeruj badge
+      sendResponse(ActualData.videos);//Wyślij listę video
+    }else if(request.ask == "settings"){
+      if(request.methodtype == "get"){
+        response = {};
+        response.time = interval.time;
+        response.max = maxPerYoutuber;
+        sendResponse(response);
+      }else if(request.methodtype == "set"){
+        chrome.storage.sync.set({"settings":request.optionsObject});
+        sendResponse();
+      }
     }
 });
