@@ -76,7 +76,7 @@ var test = function(arr){//Dostawia testowe wideo do tablicy arr
   return 0;
 }
 
-var debug = true; //Nieużywana flaga pod debugowanie
+var debug = false; //Nieużywana flaga pod debugowanie
 
 ytControler.update = function () {//Funckja pod updatowanie
     var time = new Date();//Aktualny czas
