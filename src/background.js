@@ -105,6 +105,7 @@ ytControler.update = function () {//Funckja pod updatowanie
                                 message: "By otrzymywać powiadomienia o najnowszych filmach zaloguj się do swojego konta Google na stronie youtube.com"
                             });
             flag = 0;
+            return 0;
         }
         if (!asLog.test(data))
             flag = 1;
