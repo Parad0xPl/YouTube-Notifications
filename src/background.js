@@ -248,7 +248,10 @@ interval.restart();//Odpalenie interwału
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     if (request.ask == "list") {
       chrome.browserAction.setBadgeText({text: ""});//Wyzeruj badge
-      sendResponse(ActualData.videos);//Wyślij listę video
+      sendResponse({
+        "videos":ActualData.videos,
+        "isLogged":flag
+      });//Wyślij listę video
     }else if(request.ask == "settings"){
       if(request.methodtype == "get"){
         response = {};

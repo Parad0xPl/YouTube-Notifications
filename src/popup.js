@@ -17,10 +17,10 @@ function getTime(val){;
         return String(Math.floor(stamp) + " "+textFormation(stamp, "sekund")+" temu");
     } else if((stamp /= 60) < 60) {
         return String(Math.floor(stamp) + " "+textFormation(stamp, "minut")+" temu");
-        
+
     } else if((stamp /= 60) < 24) {
         return String(Math.floor(stamp) + " "+textFormation(stamp, "godzin")+" temu");
-        
+
     } else {
         stamp /= 24;
         if(stamp < 2) return String(Math.floor(stamp) + " dzień temu");
@@ -30,8 +30,12 @@ function getTime(val){;
 
 var glob, numberOfElements = 25, n = 1;
 chrome.runtime.sendMessage({ ask: "list" }, function (obj) {
-    glob = obj;
-    draw(numberOfElements, glob);
+    glob = obj.videos;
+    if(obj.isLogged){
+      draw(numberOfElements, glob);
+    }else{
+      //Jezeli nie zalogowany
+    }
 });
 
 function draw(number, obj){
