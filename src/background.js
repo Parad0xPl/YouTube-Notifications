@@ -87,6 +87,20 @@ ytControler.update = function () {//Funckja pod updatowanie
       //vart pod wykrywanie czy skończono funkcje asynchroniczne
       //iGlobal - iterator globalny. Po zakończeniu zapytania zwiękoszny o jeden
     //Zapytanie po liste subksrypcji aktualnie zalogowanej osoby
+    $(document).ajaxError(function(){
+      if (flag) {
+          console.log("Niezalogowany");
+          chrome.notifications.create(
+                          options = {
+                              type: "basic",
+                              iconUrl: "./icons/icon128.png",
+                              title: "Zaloguj się",
+                              message: "By otrzymywać powiadomienia o najnowszych filmach zaloguj się do swojego konta Google na stronie youtube.com"
+                          });
+          flag = 0;
+      }
+      return 0;
+    });
     $.get("https://www.youtube.com/subscription_manager", function (data, status) {
         if (status !== "success") {
             //Jeżeli coś poszło nie tak
@@ -94,21 +108,7 @@ ytControler.update = function () {//Funckja pod updatowanie
             return 0;
         };
         //Test czy zalogowany
-        var asLog = /https:\/\/accounts.google.com\/ServiceLoginAuth/g;
-        if (asLog.test(data) && flag) {
-            console.log("Niezalogowany");
-            chrome.notifications.create(
-                            options = {
-                                type: "basic",
-                                iconUrl: "./icons/icon128.png",
-                                title: "Zaloguj się",
-                                message: "By otrzymywać powiadomienia o najnowszych filmach zaloguj się do swojego konta Google na stronie youtube.com"
-                            });
-            flag = 0;
-            return 0;
-        }
-        if (!asLog.test(data))
-            flag = 1;
+        flag = 1;
         var res = data.match(/<a href=\"\/channel\/[A-Za-z0-9\-_]{24}/g);//wychwytywanie subskrypcji użytkownika
         res.shift();//wyrzucenie pierwszej wartości. Potrzbne nie pamiętam czemu
         for (i in res) {
