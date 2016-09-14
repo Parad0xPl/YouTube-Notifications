@@ -18,12 +18,8 @@
   "options_page": "src/options/index.html",
   "permissions": [
     "https://www.youtube.com/*",
-<<<<<<< HEAD
     "https://accounts.google.com/ServiceLogin?service=youtube*",
-    "notifications"
-=======
     "notifications",
     "storage"
->>>>>>> 9da8b37a4184a85cd81c76085943a0b46d11b308
   ]
 }
