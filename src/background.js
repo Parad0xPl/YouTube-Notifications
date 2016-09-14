@@ -87,6 +87,20 @@ ytControler.update = function () {//Funckja pod updatowanie
       //vart pod wykrywanie czy skończono funkcje asynchroniczne
       //iGlobal - iterator globalny. Po zakończeniu zapytania zwiękoszny o jeden
     //Zapytanie po liste subksrypcji aktualnie zalogowanej osoby
+    $(document).ajaxError(function(){
+      if (flag) {
+          console.log("Niezalogowany");
+          chrome.notifications.create(
+                          options = {
+                              type: "basic",
+                              iconUrl: "./icons/icon128.png",
+                              title: "Zaloguj się",
+                              message: "By otrzymywać powiadomienia o najnowszych filmach zaloguj się do swojego konta Google na stronie youtube.com"
+                          });
+          flag = 0;
+      }
+      return 0;
+    });
     $.get("https://www.youtube.com/subscription_manager", function (data, status) {
         if (status !== "success") {
             //Jeżeli coś poszło nie tak
@@ -94,20 +108,7 @@ ytControler.update = function () {//Funckja pod updatowanie
             return 0;
         };
         //Test czy zalogowany
-        var asLog = /https:\/\/accounts.google.com\/ServiceLoginAuth/g;
-        if (asLog.test(data) && flag) {
-            console.log("Niezalogowany");
-            chrome.notifications.create(
-                            options = {
-                                type: "basic",
-                                iconUrl: "./icons/icon128.png",
-                                title: "Zaloguj się",
-                                message: "By otrzymywać powiadomienia o najnowszych filmach zaloguj się do swojego konta Google na stronie youtube.com"
-                            });
-            flag = 0;
-        }
-        if (!asLog.test(data))
-            flag = 1;
+        flag = 1;
         var res = data.match(/<a href=\"\/channel\/[A-Za-z0-9\-_]{24}/g);//wychwytywanie subskrypcji użytkownika
         res.shift();//wyrzucenie pierwszej wartości. Potrzbne nie pamiętam czemu
         for (i in res) {
@@ -147,10 +148,8 @@ ytControler.update = function () {//Funckja pod updatowanie
                             tempVideo.authorID = arg1;
                             tempVideo.image = obj2.items[x].snippet.thumbnails;
                             tempVideo.description = obj2.items[x].snippet.description;
-                            if (tempVideo.publishedAt.valueOf() >= new Date().valueOf() - (2 * 7 * 24 * 60 * 60 * 1000)) {
-                                tempVideo.publishedAtValue = tempVideo.publishedAt.valueOf();
-                                dataContener.videos.push(tempVideo);
-                            }
+                            tempVideo.publishedAtValue = tempVideo.publishedAt.valueOf();
+                            dataContener.videos.push(tempVideo);
                         }
                         iGlobal++;//Zebrano dane, zwiększono licznik
                     });
@@ -227,11 +226,41 @@ interval.func = function () {//Ustawienie funkcjji
     ytControler.update();
 }
 interval.time = 1000*15;//Nowy czas do debugowania
+
+//Initialization
+
+if(debug)
+  console.debug("Start Init");
+chrome.storage.sync.get("settings",function(items){
+  if(items != null && items != "" && items.settings != undefined){
+    console.log(items);
+    interval.time = items.settings.interval;
+    maxPerYoutuber = items.settings.max;
+  }
+});
+if(debug)
+  console.debug("Stop Init");
+
+//End of initialization
+
 interval.restart();//Odpalenie interwału
 //Listener pod zapytania z popup'a
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     if (request.ask == "list") {
-        chrome.browserAction.setBadgeText({text: ""});//Wyzeruj badge
-        sendResponse(ActualData.videos);//Wyślij listę video
+      chrome.browserAction.setBadgeText({text: ""});//Wyzeruj badge
+      sendResponse({
+        "videos":ActualData.videos,
+        "isLogged":flag
+      });//Wyślij listę video
+    }else if(request.ask == "settings"){
+      if(request.methodtype == "get"){
+        response = {};
+        response.time = interval.time;
+        response.max = maxPerYoutuber;
+        sendResponse(response);
+      }else if(request.methodtype == "set"){
+        chrome.storage.sync.set({"settings":request.optionsObject});
+        sendResponse();
+      }
     }
 });

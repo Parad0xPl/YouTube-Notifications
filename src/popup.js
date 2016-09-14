@@ -30,8 +30,12 @@ function getTime(val){;
 
 var glob, numberOfElements = 25, n = 1;
 chrome.runtime.sendMessage({ ask: "list" }, function (obj) {
-    glob = obj;
-    draw(numberOfElements, glob);
+    glob = obj.videos;
+    if(obj.isLogged){
+      draw(numberOfElements, glob);
+    }else{
+      //Jezeli nie zalogowany
+    }
 });
 
 function draw(number, obj){
