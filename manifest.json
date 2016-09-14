@@ -1,8 +1,8 @@
 {
-  "name": "See your subscription",
-  "version": "0.6",
+  "name": "YouTube Subscriptions",
+  "version": "0.7",
   "manifest_version": 2,
-  "description": "See all what Youtube is tring hide to you",
+  "description": "Application shows newest movies from authors you're subscribed to on Youtube. Stay notified up to date!",
   "icons": {
     "16": "icons/icon16.png",
     "48": "icons/icon48.png",
@@ -18,6 +18,7 @@
   "options_page": "src/options/index.html",
   "permissions": [
     "https://www.youtube.com/*",
+    "https://accounts.google.com/ServiceLogin?service=youtube*",
     "notifications"
   ]
 }

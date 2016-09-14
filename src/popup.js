@@ -17,10 +17,10 @@ function getTime(val){;
         return String(Math.floor(stamp) + " "+textFormation(stamp, "sekund")+" temu");
     } else if((stamp /= 60) < 60) {
         return String(Math.floor(stamp) + " "+textFormation(stamp, "minut")+" temu");
-        
+
     } else if((stamp /= 60) < 24) {
         return String(Math.floor(stamp) + " "+textFormation(stamp, "godzin")+" temu");
-        
+
     } else {
         stamp /= 24;
         if(stamp < 2) return String(Math.floor(stamp) + " dzień temu");
